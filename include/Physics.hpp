@@ -4,6 +4,7 @@
 #include <box2d/base.h>
 #include "DebugDraw.hpp"
 #include "Mario.hpp"
+#include "UserData.hpp"
 
 class Physics {
     public:

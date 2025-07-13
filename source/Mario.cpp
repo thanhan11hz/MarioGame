@@ -74,6 +74,12 @@ void Mario::init() {
         AnimFrame(0.0f, Resource::textures["run1"])
     });
 
+    mData.listener = this;
+    mData.mario = this;
+    mData.type = UserDataType::MARIO;
+
+    mCoins = 0;
+
     jumpSound = Resource::sounds["jump"];
 
     b2BodyDef bodyDef = b2DefaultBodyDef();
@@ -81,9 +87,12 @@ void Mario::init() {
     bodyDef.position = (b2Vec2){mPosition.x, mPosition.y};
     bodyDef.motionLocks.angularZ = true;
     mBody = b2CreateBody(Physics::mWorld, &bodyDef);
-    //b2Polygon dynamicBox = b2MakeBox(0.5f, 1.f);
+
     b2Capsule dynamicBox = {b2Vec2{0, 0.5f}, b2Vec2{0, -0.5f}, 0.5f};
+
     b2ShapeDef shapeDef = b2DefaultShapeDef();
+    shapeDef.enableSensorEvents = true;
+    shapeDef.userData = (void*)&mData;
     shapeDef.material.friction = 0.0f;
     shapeDef.density = 1.0f;
     b2CreateCapsuleShape(mBody, &shapeDef, &dynamicBox);
@@ -97,22 +106,43 @@ void Mario::init() {
     sd.isSensor            = true;
     sd.enableSensorEvents  = true;
     sd.density             = 0.1f;
-    sd.filter.categoryBits = 0x0002; // FOOT
-    sd.filter.maskBits     = 0x0004; // chỉ Ground (tile/platform)
-    sd.userData           = (void*)this;
-    std::cout << "11111111111111111";
+    // Using for contact
+    // sd.filter.categoryBits = 0x0002; // FOOT
+    // sd.filter.maskBits     = 0x0004; // chỉ Ground (tile/platform)
+    sd.userData           = (void*)&mData;
     mFootSensorId = b2CreateCircleShape(mBody, &sd, &foot);
-
-    std::cout << "222222222222222222222";
 }
 
-void Mario::onSensorBegin(b2ShapeId self, b2ShapeId other)
-{
-    if (B2_ID_EQUALS(self, mFootSensorId)) ++mFootContacts;
+void Mario::onSensorBegin(b2ShapeId self, b2ShapeId other) {
+    UserData* data = (UserData*)b2Shape_GetUserData(other);
+
+    if (!data) return;
+
+    if (data->type == UserDataType::MAPTILE && B2_ID_EQUALS(self, mFootSensorId)) 
+        ++mFootContacts;
+    else if (data->type == UserDataType::OBJECT && data->object && data->object->mTag == "coin") {
+        std::cout << "Coins = " << ++mCoins << "\n";
+        std::vector<Object*> &container = data->object->mContainer;
+        const auto& it = std::find(container.begin(), container.end(), data->object);
+        if (it != container.end()) {
+            delete data->object;
+            data->object = nullptr;
+            container.erase(it);
+        }
+    }
 }
 
 void Mario::onSensorEnd(b2ShapeId self, b2ShapeId other) {
-    if (B2_ID_EQUALS(self, mFootSensorId)) --mFootContacts;
+
+    if (!b2Shape_IsValid(other)) return;
+    
+    UserData* data = (UserData*)b2Shape_GetUserData(other);
+
+    if (!data) return;
+
+    if (data->type == UserDataType::MAPTILE && B2_ID_EQUALS(self, mFootSensorId) && mFootContacts > 0) 
+        --mFootContacts;
+    
 }
 
 bool Mario::isGrounded() const { 

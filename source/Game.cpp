@@ -28,9 +28,14 @@ Game::Game() {
     mCamera.zoom     = 32.0f;
     mCamera.rotation = 0.0f;
     Image image = LoadImage("resource\\map.png");
-    mMario.mPosition = mMap.createFromImage(image);
+    mMario.mPosition = mMap.createFromImage(image, mObject);
     UnloadImage(image);
     mMario.init();
+
+    for (auto &object: mObject) {
+        object->init();
+    }
+
 }
 
 void Game::run() {
@@ -73,9 +78,12 @@ void Game::input() {
 }
 
 void Game::update(float dt) {
+    Physics::update(dt);
     mMario.update(dt);
     mCamera.target = mMario.mPosition;
-    Physics::update(dt);
+    for (auto &object: mObject) {
+        object->update(dt);
+    }
 }
 
 void Game::draw() {
@@ -86,8 +94,8 @@ void Game::draw() {
     Rectangle src = {                      
         fmodf(mCamera.target.x * parallax, sky.width),
         0,
-        sky.width,    
-        sky.height   
+        (float)sky.width,    
+        (float)sky.height   
     };        
 
     Rectangle dst = {
@@ -102,6 +110,11 @@ void Game::draw() {
     BeginMode2D(mCamera);
         mMap.draw();
         mMario.draw();
+
+        for (auto &object: mObject) {
+            object->draw();
+        }
+
         Physics::debugDraw();
     EndMode2D();
 }

@@ -13,7 +13,7 @@ void Map::createCheckerBoard(size_t width, size_t height) {
     }
 }
 
-Vector2 Map::createFromImage(Image &image) {
+Vector2 Map::createFromImage(Image &image, std::vector<Object*> &object) {
     grid.clear();
     grid = std::vector(image.width, std::vector(image.height, 0));
 
@@ -29,12 +29,26 @@ Vector2 Map::createFromImage(Image &image) {
                 b2BodyId groundId = b2CreateBody(Physics::mWorld, &groundBodyDef);
                 b2Polygon groundBox = b2MakeBox(cellSize / 2.0f, cellSize / 2.0f);
                 b2ShapeDef groundShapeDef = b2DefaultShapeDef();
-                groundShapeDef.filter.categoryBits = 0x0004;
+
+                UserData* data = new UserData();
+                data->type = UserDataType::MAPTILE;
+                data->mapX = x;
+                data->mapY = y;
+                groundShapeDef.density = 1.0f;
+                groundShapeDef.userData = (void*) data;
+
+                // groundShapeDef.filter.categoryBits = 0x0004;
                 groundShapeDef.enableSensorEvents = true;
                 b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
-            }
-            else if (color.r == 255 && color.g == 0 && color.b == 0)
+            } else if (color.r == 255 && color.g == 0 && color.b == 0) {
+
                 marioPosition = Vector2{cellSize * x + cellSize/2.0f, cellSize * y + cellSize/2.0f};
+
+            } else if (color.r == 255 && color.g == 255 && color.b == 0) {
+                Object* coin = new Coin(object);
+                coin->mPostion = {cellSize * x + cellSize / 2.0f, cellSize * y + cellSize / 2.0f};
+                object.push_back(coin);
+            }
 
         }
     }

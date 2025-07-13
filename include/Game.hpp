@@ -8,6 +8,7 @@
 #include "Map.hpp"
 #include "Mario.hpp"
 #include "Physics.hpp"
+#include "Object.hpp"
 
 #include <box2d/box2d.h>
 
@@ -24,4 +25,5 @@ class Game {
         Map mMap;
         Mario mMario;
         Music mMusic;
+        std::vector<Object*> mObject;
 };

@@ -5,6 +5,7 @@
 
 #include "Resource.hpp"
 #include "Physics.hpp"
+#include "Coin.hpp"
 
 class Map {
     public:
@@ -12,7 +13,7 @@ class Map {
         std::vector<std::vector<int>> grid;
         void createCheckerBoard(size_t width, size_t height);
         void draw();
-        Vector2 createFromImage(Image &image);
+        Vector2 createFromImage(Image &image, std::vector<Object*> &object);
     private:
         float cellSize;
 };

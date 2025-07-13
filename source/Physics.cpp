@@ -28,11 +28,21 @@ void Physics::updateSensor() {
 
         const b2SensorBeginTouchEvent& e = se.beginEvents[i];
 
-        ContactListener* sensorOwner  = (ContactListener*)b2Shape_GetUserData(e.sensorShapeId);
-        ContactListener* otherVisitor = (ContactListener*)b2Shape_GetUserData(e.visitorShapeId);
+        if (!b2Shape_IsValid(e.sensorShapeId)) continue;
+        if (!b2Shape_IsValid(e.visitorShapeId)) continue;
 
-        if (sensorOwner)  sensorOwner->onSensorBegin(e.sensorShapeId, e.visitorShapeId);
-        if (otherVisitor) otherVisitor->onSensorBegin(e.visitorShapeId, e.sensorShapeId);
+        UserData* sensorOwner  = (UserData*)b2Shape_GetUserData(e.sensorShapeId);
+        UserData* otherVisitor = (UserData*)b2Shape_GetUserData(e.visitorShapeId);
+
+        if (!b2Shape_IsValid(e.sensorShapeId)) continue;
+        if (!b2Shape_IsValid(e.visitorShapeId)) return;
+
+        if (sensorOwner && sensorOwner->listener)  sensorOwner->listener->onSensorBegin(e.sensorShapeId, e.visitorShapeId);
+
+        if (!b2Shape_IsValid(e.sensorShapeId)) continue;
+        if (!b2Shape_IsValid(e.visitorShapeId)) continue;
+
+        if (otherVisitor && otherVisitor->listener) otherVisitor->listener->onSensorBegin(e.visitorShapeId, e.sensorShapeId);
 
     }
 
@@ -40,10 +50,20 @@ void Physics::updateSensor() {
 
         const b2SensorEndTouchEvent& e = se.endEvents[i];
 
-        ContactListener* sensorOwner  = (ContactListener*)b2Shape_GetUserData(e.sensorShapeId);
-        ContactListener* otherVisitor = (ContactListener*)b2Shape_GetUserData(e.visitorShapeId);
+        if (!b2Shape_IsValid(e.sensorShapeId)) continue;
+        if (!b2Shape_IsValid(e.visitorShapeId)) continue;
 
-        if (sensorOwner)  sensorOwner->onSensorEnd(e.sensorShapeId, e.visitorShapeId);
-        if (otherVisitor) otherVisitor->onSensorEnd(e.visitorShapeId, e.sensorShapeId);
+        UserData* sensorOwner  = (UserData*)b2Shape_GetUserData(e.sensorShapeId);
+        UserData* otherVisitor = (UserData*)b2Shape_GetUserData(e.visitorShapeId);
+
+        if (!b2Shape_IsValid(e.sensorShapeId)) continue;
+        if (!b2Shape_IsValid(e.visitorShapeId)) continue;
+
+        if (sensorOwner && sensorOwner->listener)  sensorOwner->listener->onSensorEnd(e.sensorShapeId, e.visitorShapeId);
+
+        if (!b2Shape_IsValid(e.sensorShapeId)) continue;
+        if (!b2Shape_IsValid(e.visitorShapeId)) continue;
+
+        if (otherVisitor && otherVisitor->listener) otherVisitor->listener->onSensorEnd(e.visitorShapeId, e.sensorShapeId);
     }
 }
