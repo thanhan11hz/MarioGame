@@ -2,7 +2,7 @@
 
 const float movementSpeed = 8.0f; 
 
-const float jumpVelocity = 12.0f;
+const float jumpVelocity = 20.0f;
 
 void Mario::update(float dt) {
     float move = movementSpeed;

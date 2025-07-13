@@ -21,6 +21,8 @@ Game::Game() {
     mMusic.looping = true;
     PlayMusicStream(mMusic);
 
+    mFont = LoadFont("resource\\font.ttf");
+
     Physics::init();
 
     mCamera.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
@@ -87,6 +89,7 @@ void Game::update(float dt) {
 }
 
 void Game::draw() {
+    
     Texture2D sky = Resource::textures["sky"];
     SetTextureWrap(sky, TEXTURE_WRAP_REPEAT);
     SetTextureFilter(sky, TEXTURE_FILTER_POINT);
@@ -117,4 +120,16 @@ void Game::draw() {
 
         Physics::debugDraw();
     EndMode2D();
+
+    drawUI();
+}
+
+void Game::drawUI() {
+    std::string mText = "Coins: " + std::to_string(mMario.getCoin());
+    Vector2 textSize = MeasureTextEx(mFont, mText.c_str(), 30, 10);\
+    Vector2 textPos = {
+        100 + (200 - textSize.x) /2.0f,
+        10 + (100 - textSize.y) /2.0f
+    };
+    DrawTextEx(mFont, mText.c_str(), textPos, 30, 10, WHITE);
 }

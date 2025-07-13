@@ -19,11 +19,13 @@ class Game {
         void input();
         void update(float dt);
         void draw();
+        void drawUI();
     private:
         float mTimePerFrame = 1 / 60.f;
         Camera2D mCamera;
         Map mMap;
         Mario mMario;
         Music mMusic;
+        Font mFont;
         std::vector<Object*> mObject;
 };

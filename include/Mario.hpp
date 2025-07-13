@@ -21,6 +21,7 @@ class Mario : public ContactListener {
         void draw();
         Vector2 mPosition{};
         float angle{};
+        size_t getCoin() { return mCoins; }
     private:
         b2BodyId mBody;
         b2ShapeId  mFootSensorId {0};
