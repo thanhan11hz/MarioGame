@@ -21,11 +21,10 @@ void Physics::debugDraw() {
 }
 
 void Physics::updateSensor() {
-
     b2SensorEvents se = b2World_GetSensorEvents(mWorld);
 
     for (int i = 0; i < se.beginCount; ++i) {
-
+        
         const b2SensorBeginTouchEvent& e = se.beginEvents[i];
 
         if (!b2Shape_IsValid(e.sensorShapeId)) continue;
@@ -33,14 +32,16 @@ void Physics::updateSensor() {
 
         UserData* sensorOwner  = (UserData*)b2Shape_GetUserData(e.sensorShapeId);
         UserData* otherVisitor = (UserData*)b2Shape_GetUserData(e.visitorShapeId);
-
-        if (!b2Shape_IsValid(e.sensorShapeId)) continue;
-        if (!b2Shape_IsValid(e.visitorShapeId)) return;
-
-        if (sensorOwner && sensorOwner->listener)  sensorOwner->listener->onSensorBegin(e.sensorShapeId, e.visitorShapeId);
-
+        
         if (!b2Shape_IsValid(e.sensorShapeId)) continue;
         if (!b2Shape_IsValid(e.visitorShapeId)) continue;
+        
+
+        if (sensorOwner && sensorOwner->listener)  sensorOwner->listener->onSensorBegin(e.sensorShapeId, e.visitorShapeId);
+        
+        if (!b2Shape_IsValid(e.sensorShapeId)) continue;
+        if (!b2Shape_IsValid(e.visitorShapeId)) continue;
+        if (otherVisitor->type == UserDataType::OBJECT || otherVisitor->type == UserDataType::MAPTILE) continue;
 
         if (otherVisitor && otherVisitor->listener) otherVisitor->listener->onSensorBegin(e.visitorShapeId, e.sensorShapeId);
 
@@ -58,11 +59,13 @@ void Physics::updateSensor() {
 
         if (!b2Shape_IsValid(e.sensorShapeId)) continue;
         if (!b2Shape_IsValid(e.visitorShapeId)) continue;
+        
 
         if (sensorOwner && sensorOwner->listener)  sensorOwner->listener->onSensorEnd(e.sensorShapeId, e.visitorShapeId);
-
+        
         if (!b2Shape_IsValid(e.sensorShapeId)) continue;
         if (!b2Shape_IsValid(e.visitorShapeId)) continue;
+        if (otherVisitor->type == UserDataType::OBJECT || otherVisitor->type == UserDataType::MAPTILE) continue;
 
         if (otherVisitor && otherVisitor->listener) otherVisitor->listener->onSensorEnd(e.visitorShapeId, e.sensorShapeId);
     }

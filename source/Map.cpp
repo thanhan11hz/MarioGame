@@ -39,20 +39,22 @@ Vector2 Map::createFromImage(Image &image, std::vector<Object*> &object) {
                 grid[x][y] = &(Resource::textures["brick"]);
 
             } else if (color.r == 255 && color.g == 255 && color.b == 0) {
-                std::cout << "Coin";
                 entity = new Coin(object);
 
             } else if (color.r == 0 && color.g == 255 && color.b == 0) {
 
                 grid[x][y] = &Resource::textures["rock"];
 
-            } 
+            } else if (color.r == 0 && color.g == 0 && color.b == 255) {
+                entity = new Enemy(object);
+            }
 
             if (entity) {
-                entity->mPostion = {cellSize * x + cellSize / 2.0f, cellSize * y + cellSize / 2.0f};
+                entity->mPosition = {cellSize * x + cellSize / 2.0f, cellSize * y + cellSize / 2.0f};
                 object.push_back(entity);
 
-            } else {
+            } else if (grid[x][y]) {
+
                 b2BodyDef groundBodyDef = b2DefaultBodyDef();
                 groundBodyDef.position = (b2Vec2){cellSize * x + cellSize / 2.0f, cellSize * y + cellSize / 2.0f};
                 b2BodyId groundId = b2CreateBody(Physics::mWorld, &groundBodyDef);

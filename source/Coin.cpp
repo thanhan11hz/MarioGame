@@ -21,7 +21,7 @@ void Coin::init() {
     });
 
     b2BodyDef bodyDef = b2DefaultBodyDef();
-    bodyDef.position = (b2Vec2){mPostion.x, mPostion.y};
+    bodyDef.position = (b2Vec2){mPosition.x, mPosition.y};
     mBody = b2CreateBody(Physics::mWorld, &bodyDef);
     b2Polygon shapeBox = b2MakeBox(0.4f, 0.4f);
     b2ShapeDef shapeDef = b2DefaultShapeDef();
@@ -50,8 +50,8 @@ void Coin::draw() {
     };
 
     Rectangle dest = {
-        Object::mPostion.x, 
-        Object::mPostion.y, 
+        mPosition.x, 
+        mPosition.y, 
         0.8f, 
         0.8f
     };

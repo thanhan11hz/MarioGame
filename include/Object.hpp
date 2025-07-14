@@ -14,7 +14,7 @@ class Object {
         virtual void draw();
 
         std::string mTag{};
-        Vector2 mPostion{};
+        Vector2 mPosition{};
         float mAngle{};
         std::vector<Object*>& mContainer;
 };

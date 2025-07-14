@@ -10,6 +10,7 @@
 #include "ContactListener.hpp"
 #include "Animation.hpp"
 #include "UserData.hpp"
+#include "Enemy.hpp"
 
 class Mario : public ContactListener {
     public:

@@ -6,6 +6,7 @@
 #include "Resource.hpp"
 #include "Physics.hpp"
 #include "Coin.hpp"
+#include "Enemy.hpp"
 
 class Map {
     public:

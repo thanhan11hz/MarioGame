@@ -59,6 +59,7 @@ void Game::run() {
             ClearBackground(BLACK);
             draw();
         EndDrawing();
+
     }
 
     for (auto texture: Resource::textures) {

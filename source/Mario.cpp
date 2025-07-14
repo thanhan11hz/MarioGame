@@ -89,7 +89,6 @@ void Mario::init() {
     mBody = b2CreateBody(Physics::mWorld, &bodyDef);
 
     b2Capsule dynamicBox = {b2Vec2{0, 0.5f}, b2Vec2{0, -0.5f}, 0.5f};
-
     b2ShapeDef shapeDef = b2DefaultShapeDef();
     shapeDef.enableSensorEvents = true;
     shapeDef.userData = (void*)&mData;
@@ -97,11 +96,17 @@ void Mario::init() {
     shapeDef.density = 1.0f;
     b2CreateCapsuleShape(mBody, &shapeDef, &dynamicBox);
 
-    b2Circle foot = {
-        .center = {0.0f, 1.05f},    
-        .radius = 0.15f
-    };
+    // b2Circle foot = {
+    //     .center = {0.0f, 1.05f},    
+    //     .radius = 0.15f
+    // };
 
+    b2Polygon foot = b2MakeOffsetBox(
+        0.4f,
+        0.1f,
+        b2Vec2{0.0f, 1.0f},
+        b2MakeRot(0.0f)
+    );
     b2ShapeDef sd = b2DefaultShapeDef();
     sd.isSensor            = true;
     sd.enableSensorEvents  = true;
@@ -110,7 +115,7 @@ void Mario::init() {
     // sd.filter.categoryBits = 0x0002; // FOOT
     // sd.filter.maskBits     = 0x0004; // chỉ Ground (tile/platform)
     sd.userData           = (void*)&mData;
-    mFootSensorId = b2CreateCircleShape(mBody, &sd, &foot);
+    mFootSensorId = b2CreatePolygonShape(mBody, &sd, &foot);
 }
 
 void Mario::onSensorBegin(b2ShapeId self, b2ShapeId other) {
@@ -129,6 +134,9 @@ void Mario::onSensorBegin(b2ShapeId self, b2ShapeId other) {
             data->object = nullptr;
             container.erase(it);
         }
+    } else if (data->type == UserDataType::OBJECT && data->object && data->object->mTag == "enemy" && B2_ID_EQUALS(self, mFootSensorId)) {
+        Enemy* enemy = (Enemy*)data->object;
+        if (enemy) enemy->die();
     }
 }
 
